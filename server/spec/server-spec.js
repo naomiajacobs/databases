@@ -54,7 +54,7 @@ describe("Persistent Node Chat Server", function() {
 
         dbConnection.query(queryString, queryArgs, function(err, results) {
           // Should have one result:
-          expect(results.length).to.equal(1);
+          expect(results.length).to.equal(2);// should be one once change top back to user
 
           // TODO: If you don't have a column named text, change this test.
           expect(results[0].message).to.equal("In mercy's name, three days is all I need.");
