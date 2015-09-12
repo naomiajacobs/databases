@@ -1,4 +1,4 @@
-var db = require('../db/index.js');
+var db = require('../db');
 
 var headers = {
   "access-control-allow-origin": "*",
@@ -21,41 +21,45 @@ module.exports = {
       });
     }, // a function which produces all the messages
     post: function (req, res) {
-      var data = JSON.parse(req.data);
+      var data = req.body;
+      console.log(data);
       var user = data.username;
       var room = data.roomname;
       var message = data.message;
       var userid, roomid;
 
-      db.connection.query('SELECT id FROM users where username = ' + user + ';', function(error, rows) {
+      db.connection.query('SELECT id FROM users where username = ' + user, function(error, rows) {
         if (error) {
-          db.connection.query('INSERT into users (username) values (' + user + ');', function(error) {
+          db.connection.query('INSERT into users (username) values (' + user + ')', function(error) {
             if (error) {
-              console.log(error);
+              console.log('insert failed: ' + error);
             } else {
-              db.connection.query('SELECT id FROM users where username = ' + user + ';'), function(error, rows) {
+              db.connection.query('SELECT id FROM users where username = ' + user), function(error, rows) {
                 if(error){
-                  console.log(error);
+                  console.log('select failed: ' + error);
                 } else {
                   userid = rows[0];
+                  console.log('rows: ' + rows);
                 }
               }
             }
           });
         } else {
           userid = rows[0];
+          console.log('rows: ' + rows);
         }
+        console.log(userid);
       });
 
-      db.connection.query('SELECT id FROM rooms where room = ' + room + ';', function(error, rows) {
+      db.connection.query('SELECT id FROM rooms where room = ' + room, function(error, rows) {
         if (error) {
-          db.connection.query('INSERT into rooms (room) values (' + room + ');', function(error) {
+          db.connection.query('INSERT into rooms (room) values (' + room + ')', function(error) {
             if (error) {
-              console.log(error);
+              console.log('insert failed: ' + error);
             } else {
-              db.connection.query('SELECT id FROM rooms where room = ' + room + ';', function(error, rows) {
+              db.connection.query('SELECT id FROM rooms where room = ' + room, function(error, rows) {
                 if(error){
-                  console.log(error);
+                  console.log('select failed: ' + error);
                 } else {
                   roomid = rows[0];
                 }
@@ -67,8 +71,8 @@ module.exports = {
         }
       });
 
-      db.connnection.query('INSERT into messages (message, user, room) VALUES (' +
-        message + ', ' + userid + ', ' + roomid + ');', function(error, rows) {
+      db.connection.query('INSERT into messages (message, user, room) VALUES (' +
+        message + ', ' + userid + ', ' + roomid + ')', function(error, rows) {
           if(error){
             console.log(error);
           } else {

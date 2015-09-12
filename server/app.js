@@ -21,6 +21,8 @@ app.use(parser.json());
 // Set up our routes
 app.use("/classes", router);
 
+// app.disable('etag');
+
 // Serve the client files
 app.use(express.static(__dirname + "/../legacy/client"));
 
